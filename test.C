@@ -78,7 +78,7 @@ int main()
 
   std::vector<Real> outvals(vals.size());
 
-  long unsigned int its = 1e9;
+  long unsigned int its = 1e8;
 
   auto start = std::chrono::high_resolution_clock::now();
   for (long unsigned int i = 0; i < its; i++)
@@ -89,6 +89,11 @@ int main()
   for (long unsigned int i = 0; i < its; i++)
     normalExp(vals, outvals);
   std::chrono::duration<Real> normal_duration = std::chrono::high_resolution_clock::now() - start;
+
+  for (auto & val : outvals)
+    std::cout<<val<<" ";
+
+  std::cout<<std::endl;
 
   start = std::chrono::high_resolution_clock::now();
   for (long unsigned int i = 0; i < its; i++)
