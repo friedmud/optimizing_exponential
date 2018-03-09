@@ -136,6 +136,7 @@ struct ExpVar {
 			mask_s[i] = mask(s);
 		}
 
+                #pragma ivdep
 		for (int i = 0; i < n; i++) {
 			float y = pow(2.0f, (float)i / n);
 			fi fi;

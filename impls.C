@@ -1,5 +1,7 @@
 #include "impls.h"
 
+#include "mkl.h"
+
 Vec4d a;
 Vec4d b;
 
@@ -42,6 +44,8 @@ void normalExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
   auto size = vec.size();
 
 #pragma clang loop vectorize_width(VecSize) interleave_count(VecSize)
+#pragma ivdep
+#pragma vector aligned
   for (unsigned int i = 0; i < size; i++)
     out_vec[i] = std::exp(vec[i]);
 }
@@ -55,3 +59,10 @@ void fmathExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
   for (unsigned int i = 0; i < vec.size(); i++)
     out_vec[i] = fmath::exp(vec[i]);
 }
+
+
+void mklExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
+{
+  vdExp(vec.size(), &vec[0], &out_vec[0]);
+}
+

@@ -33,7 +33,13 @@ int main()
     vectorizedExp(vals, outvals);
   std::chrono::duration<Real> vectorized_duration = std::chrono::high_resolution_clock::now() - start;
 
+  start = std::chrono::high_resolution_clock::now();
+  for (long unsigned int i = 0; i < its; i++)
+    mklExp(vals, outvals);
+  std::chrono::duration<Real> mkl_duration = std::chrono::high_resolution_clock::now() - start;
+
   std::cout<<"normal: "<<normal_duration.count()<<std::endl;
   std::cout<<"fmath: "<<fmath_duration.count()<<std::endl;
   std::cout<<"vectorized: "<<vectorized_duration.count()<<std::endl;
+  std::cout<<"mkl: "<<mkl_duration.count()<<std::endl;
 }
