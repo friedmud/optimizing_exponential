@@ -13,7 +13,7 @@
 
 #define Real float
 #define VecSize 8
-#define NumValues 7
+#define NumValues 64
 
 void vectorizedExp(std::vector<Real> & vec, std::vector<Real> & out_vec);
 void normalExp(std::vector<Real> & vec, std::vector<Real> & out_vec);

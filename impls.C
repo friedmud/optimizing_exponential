@@ -39,16 +39,13 @@ void vectorizedExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
 
   unsigned int remainder = total_size % VecSize;
 
+  auto out_array = &out_vec[0];
+
   for (unsigned int chunk = 0; chunk < num_chunks; chunk++)
   {
     a.load(&vec[chunk*VecSize]);
     b = exp(a);
-
-    auto current_out_vec = &out_vec[chunk * VecSize];
-
-#pragma clang loop vectorize_width(VecSize) interleave_count(VecSize)
-    for (unsigned int i = 0; i < VecSize; i++)
-      current_out_vec[i] = b[i];
+    b.store(out_array + (chunk * VecSize));
   }
 
   // The remaineder
@@ -56,12 +53,7 @@ void vectorizedExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
   {
     a.load_partial(remainder, &vec[num_chunks*VecSize]);
     b = exp(a);
-
-    auto current_out_vec = &out_vec[num_chunks*VecSize];
-
-#pragma clang loop vectorize_width(VecSize) interleave_count(VecSize)
-    for (unsigned int i = 0; i < remainder; i++)
-      current_out_vec[i] = b[i];
+    b.store_partial(remainder, (out_array + (num_chunks * VecSize)));
   }
 }
 
