@@ -5,34 +5,33 @@ int main()
   std::vector<Real> vals(NumValues);
 
   for (unsigned int i = 0; i < NumValues; i++)
-    vals[i] = i;
+    vals[i] = i * 1e-2;
 
   std::cout<<"Vector Size: "<<vals.size()<<std::endl;
 
   std::vector<Real> outvals(vals.size());
 
-  long unsigned int its = 1e8;
+  long unsigned int its = 1e7;
 
+  std::cout<<"Starting Normal"<<std::endl;
   auto start = std::chrono::high_resolution_clock::now();
-  for (long unsigned int i = 0; i < its; i++)
-    fmathExp(vals, outvals);
-  std::chrono::duration<Real> fmath_duration = std::chrono::high_resolution_clock::now() - start;
-
-  start = std::chrono::high_resolution_clock::now();
   for (long unsigned int i = 0; i < its; i++)
     normalExp(vals, outvals);
   std::chrono::duration<Real> normal_duration = std::chrono::high_resolution_clock::now() - start;
 
-  for (auto & val : outvals)
-    std::cout<<val<<" ";
+  std::cout<<"Starting FMath"<<std::endl;
+  start = std::chrono::high_resolution_clock::now();
+  for (long unsigned int i = 0; i < its; i++)
+    fmathExp(vals, outvals);
+  std::chrono::duration<Real> fmath_duration = std::chrono::high_resolution_clock::now() - start;
 
-  std::cout<<std::endl;
-
+  std::cout<<"Starting Vector Lib"<<std::endl;
   start = std::chrono::high_resolution_clock::now();
   for (long unsigned int i = 0; i < its; i++)
     vectorizedExp(vals, outvals);
   std::chrono::duration<Real> vectorized_duration = std::chrono::high_resolution_clock::now() - start;
 
+  std::cout<<"Starting MKL"<<std::endl;
   start = std::chrono::high_resolution_clock::now();
   for (long unsigned int i = 0; i < its; i++)
     mklExp(vals, outvals);

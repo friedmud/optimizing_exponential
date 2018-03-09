@@ -10,8 +10,8 @@
 #include "vectormath_exp.h"
 #include "fmath.h"
 
-#define Real double
-#define VecSize 4
+#define Real float
+#define VecSize 8
 #define NumValues 64
 
 void vectorizedExp(std::vector<Real> & vec, std::vector<Real> & out_vec);
