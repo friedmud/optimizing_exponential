@@ -18,5 +18,6 @@ void vectorizedExp(std::vector<Real> & vec, std::vector<Real> & out_vec);
 void normalExp(std::vector<Real> & vec, std::vector<Real> & out_vec);
 void fmathExp(std::vector<Real> & vec, std::vector<Real> & out_vec);
 void mklExp(std::vector<Real> & vec, std::vector<Real> & out_vec);
+void ippExp(std::vector<Real> & vec, std::vector<Real> & out_vec);
 
 #endif

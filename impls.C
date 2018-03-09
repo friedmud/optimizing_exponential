@@ -2,8 +2,32 @@
 
 #include "mkl.h"
 
+#include "ippcore.h"
+#include "ippvm.h"
+
 Vec8f a;
 Vec8f b;
+
+void normalExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
+{
+  auto size = vec.size();
+
+#pragma clang loop vectorize_width(VecSize) interleave_count(VecSize)
+#pragma ivdep
+#pragma vector aligned
+  for (unsigned int i = 0; i < size; i++)
+    out_vec[i] = std::exp(vec[i]);
+}
+
+
+void fmathExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
+{
+  auto size = vec.size();
+
+#pragma clang loop vectorize_width(VecSize) interleave_count(VecSize)
+  for (unsigned int i = 0; i < vec.size(); i++)
+    out_vec[i] = fmath::exp(vec[i]);
+}
 
 void vectorizedExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
 {
@@ -39,29 +63,13 @@ void vectorizedExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
   }
 }
 
-void normalExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
-{
-  auto size = vec.size();
-
-#pragma clang loop vectorize_width(VecSize) interleave_count(VecSize)
-#pragma ivdep
-#pragma vector aligned
-  for (unsigned int i = 0; i < size; i++)
-    out_vec[i] = std::exp(vec[i]);
-}
-
-
-void fmathExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
-{
-  auto size = vec.size();
-
-#pragma clang loop vectorize_width(VecSize) interleave_count(VecSize)
-  for (unsigned int i = 0; i < vec.size(); i++)
-    out_vec[i] = fmath::exp(vec[i]);
-}
-
-
 void mklExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
 {
   vsExp(vec.size(), &vec[0], &out_vec[0]);
+}
+
+void ippExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
+{
+//  ippsExp_32f_A11(&vec[0], &out_vec[0], vec.size());
+  ippsExp_32f_A24(&vec[0], &out_vec[0], vec.size());
 }

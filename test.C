@@ -11,7 +11,7 @@ int main()
 
   std::vector<Real> outvals(vals.size());
 
-  long unsigned int its = 1e7;
+  long unsigned int its = 1e8;
 
   std::cout<<"Starting Normal"<<std::endl;
   auto start = std::chrono::high_resolution_clock::now();
@@ -37,8 +37,15 @@ int main()
     mklExp(vals, outvals);
   std::chrono::duration<Real> mkl_duration = std::chrono::high_resolution_clock::now() - start;
 
+  std::cout<<"Starting IPP"<<std::endl;
+  start = std::chrono::high_resolution_clock::now();
+  for (long unsigned int i = 0; i < its; i++)
+    ippExp(vals, outvals);
+  std::chrono::duration<Real> ipp_duration = std::chrono::high_resolution_clock::now() - start;
+
   std::cout<<"normal: "<<normal_duration.count()<<std::endl;
   std::cout<<"fmath: "<<fmath_duration.count()<<std::endl;
   std::cout<<"vectorized: "<<vectorized_duration.count()<<std::endl;
   std::cout<<"mkl: "<<mkl_duration.count()<<std::endl;
+  std::cout<<"ipp: "<<ipp_duration.count()<<std::endl;
 }
