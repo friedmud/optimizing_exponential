@@ -19,11 +19,18 @@ int main()
     normalExp(vals, outvals);
   std::chrono::duration<Real> normal_duration = std::chrono::high_resolution_clock::now() - start;
 
-  std::cout<<"Starting Valarray"<<std::endl;
-  start = std::chrono::high_resolution_clock::now();
-  for (long unsigned int i = 0; i < its; i++)
-    valarrayExp(vals, outvals);
-  std::chrono::duration<Real> valarray_duration = std::chrono::high_resolution_clock::now() - start;
+  std::chrono::duration<Real> valarray_duration;
+
+  if (its * NumValues < 1e8)
+  {
+    std::cout<<"Starting Valarray"<<std::endl;
+    start = std::chrono::high_resolution_clock::now();
+    for (long unsigned int i = 0; i < its; i++)
+      valarrayExp(vals, outvals);
+    valarray_duration = std::chrono::high_resolution_clock::now() - start;
+  }
+  else
+    std::cout<<"Skipping Valarray because it's slow!"<<std::endl;
 
   std::cout<<"Starting FMath"<<std::endl;
   start = std::chrono::high_resolution_clock::now();
@@ -52,7 +59,10 @@ int main()
 #endif
 
   std::cout<<"normal: "<<normal_duration.count()<<std::endl;
-  std::cout<<"valarray: "<<valarray_duration.count()<<std::endl;
+
+  if (its * NumValues < 1e8)
+    std::cout<<"valarray: "<<valarray_duration.count()<<std::endl;
+
   std::cout<<"fmath: "<<fmath_duration.count()<<std::endl;
   std::cout<<"vectorized: "<<vectorized_duration.count()<<std::endl;
   std::cout<<"mkl: "<<mkl_duration.count()<<std::endl;

@@ -54,7 +54,7 @@ void vectorizedExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
 
   unsigned int remainder = total_size % VecSize;
 
-  auto out_array = &out_vec[0];
+  auto out_array = out_vec.data();
 
   for (unsigned int chunk = 0; chunk < num_chunks; chunk++)
   {
@@ -74,15 +74,14 @@ void vectorizedExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
 
 void mklExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
 {
-  vsExp(vec.size(), &vec[0], &out_vec[0]);
+  vsExp(vec.size(), vec.data(), out_vec.data());
 }
 
 #ifdef USE_IPP
 
 void ippExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
 {
-//  ippsExp_32f_A11(&vec[0], &out_vec[0], vec.size());
-  ippsExp_32f_A24(&vec[0], &out_vec[0], vec.size());
+  ippsExp_32f_A24(vec.data(), out_vec.data(), vec.size());
 }
 
 #endif
