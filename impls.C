@@ -1,5 +1,7 @@
 #include "impls.h"
 
+#include <valarray>
+
 #include "mkl.h"
 
 #ifdef USE_IPP
@@ -15,12 +17,25 @@ void normalExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
   auto size = vec.size();
 
 #pragma clang loop vectorize_width(VecSize) interleave_count(VecSize)
-#pragma ivdep
-#pragma vector aligned
   for (unsigned int i = 0; i < size; i++)
     out_vec[i] = std::exp(vec[i]);
 }
 
+void valarrayExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
+{
+  std::valarray<Real> va(vec.data(), vec.size());
+
+  std::valarray<Real> result = std::exp(va);
+
+  auto va_data = &result[0];
+
+  auto size = out_vec.size();
+  auto data = out_vec.data();
+
+#pragma clang loop vectorize_width(VecSize) interleave_count(VecSize)
+  for (decltype(size) i = 0; i < size; i++)
+    data[i] = va_data[i];
+}
 
 void fmathExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
 {

@@ -13,11 +13,12 @@
 
 #define Real float
 #define VecSize 8
-#define NumValues 64
+#define NumValues 7
 
-void vectorizedExp(std::vector<Real> & vec, std::vector<Real> & out_vec);
 void normalExp(std::vector<Real> & vec, std::vector<Real> & out_vec);
+void valarrayExp(std::vector<Real> & vec, std::vector<Real> & out_vec);
 void fmathExp(std::vector<Real> & vec, std::vector<Real> & out_vec);
+void vectorizedExp(std::vector<Real> & vec, std::vector<Real> & out_vec);
 void mklExp(std::vector<Real> & vec, std::vector<Real> & out_vec);
 
 #ifdef USE_IPP
