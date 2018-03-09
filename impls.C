@@ -2,8 +2,10 @@
 
 #include "mkl.h"
 
+#ifdef USE_IPP
 #include "ippcore.h"
 #include "ippvm.h"
+#endif
 
 Vec8f a;
 Vec8f b;
@@ -68,8 +70,12 @@ void mklExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
   vsExp(vec.size(), &vec[0], &out_vec[0]);
 }
 
+#ifdef USE_IPP
+
 void ippExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
 {
 //  ippsExp_32f_A11(&vec[0], &out_vec[0], vec.size());
   ippsExp_32f_A24(&vec[0], &out_vec[0], vec.size());
 }
+
+#endif

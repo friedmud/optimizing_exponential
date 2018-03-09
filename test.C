@@ -37,15 +37,20 @@ int main()
     mklExp(vals, outvals);
   std::chrono::duration<Real> mkl_duration = std::chrono::high_resolution_clock::now() - start;
 
+#ifdef USE_IPP
   std::cout<<"Starting IPP"<<std::endl;
   start = std::chrono::high_resolution_clock::now();
   for (long unsigned int i = 0; i < its; i++)
     ippExp(vals, outvals);
   std::chrono::duration<Real> ipp_duration = std::chrono::high_resolution_clock::now() - start;
+#endif
 
   std::cout<<"normal: "<<normal_duration.count()<<std::endl;
   std::cout<<"fmath: "<<fmath_duration.count()<<std::endl;
   std::cout<<"vectorized: "<<vectorized_duration.count()<<std::endl;
   std::cout<<"mkl: "<<mkl_duration.count()<<std::endl;
+
+#ifdef USE_IPP
   std::cout<<"ipp: "<<ipp_duration.count()<<std::endl;
+#endif
 }
