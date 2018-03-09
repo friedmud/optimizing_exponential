@@ -1,0 +1,1 @@
+clang++ -std=c++11 -O3 -L$MKLPATH -Wl,-rpath,$MKLPATH -lmkl_rt test.C impls.C
