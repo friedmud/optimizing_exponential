@@ -6,9 +6,10 @@
 #include <cmath>
 #include <chrono>
 
-#include "vectorclass.h"
-#include "vectormath_exp.h"
-#include "fmath.h"
+#include "vecmath/vectorclass.h"
+#include "vecmath/vectormath_exp.h"
+
+#include "fmath/fmath.h"
 
 #define Real float
 #define VecSize 8
