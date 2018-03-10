@@ -1,4 +1,5 @@
-#include "FlatFlux.h"
+#include "OptimizedFlatFlux.h"
+#include "FMathFlatFlux.h"
 
 #include <chrono>
 #include <iostream>
@@ -22,13 +23,22 @@ void test_flat_flux()
   for (auto & val : Q)
     val = (double)rand()/(double)RAND_MAX;
 
-  FlatFlux ff(scalar_flux, fsr_solution, Q);
+  OptimizedFlatFlux off(scalar_flux, fsr_solution, Q);
 
   std::cout<<"Starting Optimized"<<std::endl;
   auto start = std::chrono::high_resolution_clock::now();
   for (unsigned long int s = 0; s < NUM_SEGMENTS; s++)
-    ff.onSegment();
+    off.onSegment();
   std::chrono::duration<Real> optimized_duration = std::chrono::high_resolution_clock::now() - start;
 
+  FMathFlatFlux fmff(scalar_flux, fsr_solution, Q);
+
+  std::cout<<"Starting FMath"<<std::endl;
+  start = std::chrono::high_resolution_clock::now();
+  for (unsigned long int s = 0; s < NUM_SEGMENTS; s++)
+    fmff.onSegment();
+  std::chrono::duration<Real> fmath_duration = std::chrono::high_resolution_clock::now() - start;
+
   std::cout<<"optmized: "<<optimized_duration.count()<<std::endl;
+  std::cout<<"fmath: "<<fmath_duration.count()<<std::endl;
 }
