@@ -30,11 +30,6 @@ public:
   virtual ~FlatFlux();
 
   /**
-   * Called before tracing a Ray
-   */
-  virtual void rayStart();
-
-  /**
    * Called on each Segment
    * @param start The beginning of the segment
    * @param end The end of the segment
@@ -68,10 +63,10 @@ protected:
   Real _azimuthal_weight = 0.02;
 
   /// Pointer to the beginning of the Ray's data
-  Real _angular_flux[NUM_GROUPS];
+  Real _angular_flux[NUM_POLAR * NUM_GROUPS];
 
   /// Polar spacing
-  Real _polar_spacing;
+  Real _polar_spacing = 0.02;
 
   /// Sin of the polar angle
   Real _polar_sins[NUM_POLAR];

@@ -15,6 +15,7 @@
 #include "FlatFlux.h"
 
 #include<cmath>
+#include<iostream>
 
 FlatFlux::FlatFlux(std::vector<Real> & scalar_flux, std::vector<Real> & fsr_solution, std::vector<Real> & Q) :
     _dead_zone(0),
@@ -25,20 +26,18 @@ FlatFlux::FlatFlux(std::vector<Real> & scalar_flux, std::vector<Real> & fsr_solu
     _scalar_flux(scalar_flux.data()),
     _fsr_volumes(fsr_solution.data()),
     _Q(Q.data()),
-    _delta_angular_flux(NUM_GROUPS),
-    _exp_tau(NUM_GROUPS),
-    _sigma_t(NUM_GROUPS)
+    _delta_angular_flux(_num_groups),
+    _exp_tau(_num_groups),
+    _sigma_t(_num_groups)
 {
   for (unsigned int i = 0; i < NUM_GROUPS; i++)
     _sigma_t[i] = (double)i/(double)1000;
+
+  for (unsigned int i = 0; i < NUM_POLAR * NUM_GROUPS; i++)
+    _angular_flux[i] = (double)i/(double)230;
 }
 
 FlatFlux::~FlatFlux() {}
-
-void
-FlatFlux::rayStart()
-{
-}
 
 void
 FlatFlux::onSegment()
@@ -86,25 +85,30 @@ FlatFlux::onSegment()
     for (unsigned int g = 0; g < _num_groups; g++)
       current_angular_flux[g] -= current_delta_angular_flux[g];
 
-    if (0.0 > _dead_zone)
+    if (-1 > _dead_zone)
     {
       const Real scalar_flux_multiplier = 4.0 * PI * _azimuthal_spacing * _polar_spacing *
                                           _azimuthal_weight * polar_weight * polar_sin;
 
+      /*
 #pragma clang loop vectorize_width(8) interleave_count(8)
       for (unsigned int g = 0; g < _num_groups; g++)
         current_scalar_flux[g] += scalar_flux_multiplier * current_delta_angular_flux[g];
+      */
 
+      /*
       _fsr_volumes[_current_fsr_offset] += _azimuthal_spacing * _azimuthal_weight *
                                            tracking_segment_length * 0.5 * _polar_spacing *
                                            polar_weight;
+      */
     }
   }
-
+/*
   auto integrated_distance = 10023;
 
-  if (0.0 > _dead_zone)
+  if (-1 > _dead_zone)
 #pragma clang loop vectorize_width(8) interleave_count(8)
     for (unsigned int p = 0; p < _num_polar; p++)
       integrated_distance += tracking_segment_length;
+*/
 }
