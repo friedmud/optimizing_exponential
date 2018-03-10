@@ -1,1 +1,1 @@
-clang++ -std=c++11 -O3 -L$MKLPATH -Wl,-rpath,$MKLPATH -lmkl_rt -I $IPPROOT/include -L $IPPROOT/lib -lippi -lipps -lippcore -lippvm -D USE_IPP test.C impls.C
+clang++ -std=c++11 -O3 -Wl,-rpath,$MKLROOT/lib/ -L$MKLROOT/lib/ -lmkl_rt -I $IPPROOT/include -L $IPPROOT/lib -lippi -lipps -lippcore -lippvm -D USE_IPP test.C impls.C test_impls.C
