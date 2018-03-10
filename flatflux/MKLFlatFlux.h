@@ -12,18 +12,18 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef OPTIMIZEDFLATFLUX_H
-#define OPTIMIZEDFLATFLUX_H
+#ifndef MKLFLATFLUX_H
+#define MKLFLATFLUX_H
 
 #include "flat_flux_common.h"
 
 #include <vector>
 
-class OptimizedFlatFlux
+class MKLFlatFlux
 {
 public:
-  OptimizedFlatFlux(std::vector<Real> & scalar_flux, std::vector<Real> & fsr_solution, std::vector<Real> & Q);
-  virtual ~OptimizedFlatFlux();
+  MKLFlatFlux(std::vector<Real> & scalar_flux, std::vector<Real> & fsr_solution, std::vector<Real> & Q);
+  virtual ~MKLFlatFlux();
 
   /**
    * Called on each Segment
@@ -79,4 +79,4 @@ protected:
   std::vector<double> _sigma_t;
 };
 
-#endif /* OPTIMIZEDFLATFLUX_H */
+#endif /* MKLFLATFLUX_H */

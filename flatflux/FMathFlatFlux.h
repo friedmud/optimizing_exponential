@@ -15,13 +15,9 @@
 #ifndef FLATFLUX_H
 #define FLATFLUX_H
 
+#include "flat_flux_common.h"
+
 #include <vector>
-
-#define NUM_GROUPS 7
-#define NUM_POLAR 3
-#define PI 3.1415926535
-
-#define Real double
 
 class FMathFlatFlux
 {

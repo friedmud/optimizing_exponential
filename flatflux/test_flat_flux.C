@@ -1,5 +1,6 @@
 #include "OptimizedFlatFlux.h"
 #include "FMathFlatFlux.h"
+#include "MKLFlatFlux.h"
 
 #include <chrono>
 #include <iostream>
@@ -39,6 +40,15 @@ void test_flat_flux()
     fmff.onSegment();
   std::chrono::duration<Real> fmath_duration = std::chrono::high_resolution_clock::now() - start;
 
+  MKLFlatFlux mklff(scalar_flux, fsr_solution, Q);
+
+  std::cout<<"Starting MKL"<<std::endl;
+  start = std::chrono::high_resolution_clock::now();
+  for (unsigned long int s = 0; s < NUM_SEGMENTS; s++)
+    mklff.onSegment();
+  std::chrono::duration<Real> mkl_duration = std::chrono::high_resolution_clock::now() - start;
+
   std::cout<<"optmized: "<<optimized_duration.count()<<std::endl;
   std::cout<<"fmath: "<<fmath_duration.count()<<std::endl;
+  std::cout<<"mkl: "<<mkl_duration.count()<<std::endl;
 }
