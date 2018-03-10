@@ -5,7 +5,7 @@
 * Version:       1.26
 * Project:       vector classes
 * Description:
-* Header file containing inline vector functions of logarithms, exponential 
+* Header file containing inline vector functions of logarithms, exponential
 * and power functions:
 * exp         exponential function
 * exp2        exponential function base 2
@@ -33,9 +33,9 @@
 ******************************************************************************/
 
 #ifndef VECTORMATH_EXP_H
-#define VECTORMATH_EXP_H  1 
+#define VECTORMATH_EXP_H  1
 
-#include "vectormath_common.h"  
+#include "vectormath_common.h"
 
 #ifdef VCL_NAMESPACE
 namespace VCL_NAMESPACE {
@@ -137,23 +137,23 @@ static inline Vec16f vm_pow2n (Vec16f const & n) {
 #if 1  // choose method
 
 // Taylor expansion
-template<class VTYPE, class BVTYPE, int M1, int BA> 
-static inline VTYPE exp_d(VTYPE const & initial_x) {    
+template<class VTYPE, class BVTYPE, int M1, int BA>
+static inline VTYPE exp_d(VTYPE const & initial_x) {
 
     // Taylor coefficients, 1/n!
     // Not using minimax approximation because we prioritize precision close to x = 0
     const double p2  = 1./2.;
     const double p3  = 1./6.;
     const double p4  = 1./24.;
-    const double p5  = 1./120.; 
-    const double p6  = 1./720.; 
-    const double p7  = 1./5040.; 
-    const double p8  = 1./40320.; 
-    const double p9  = 1./362880.; 
-    const double p10 = 1./3628800.; 
-    const double p11 = 1./39916800.; 
-    const double p12 = 1./479001600.; 
-    const double p13 = 1./6227020800.; 
+    const double p5  = 1./120.;
+    const double p6  = 1./720.;
+    const double p7  = 1./5040.;
+    const double p8  = 1./40320.;
+    const double p9  = 1./362880.;
+    const double p10 = 1./3628800.;
+    const double p11 = 1./39916800.;
+    const double p12 = 1./479001600.;
+    const double p13 = 1./6227020800.;
 
     // maximum abs(x), value depends on BA, defined below
     // The lower limit of x is slightly more restrictive than the upper limit.
@@ -199,7 +199,7 @@ static inline VTYPE exp_d(VTYPE const & initial_x) {
 
     if (BA == 1) r--;  // 0.5 * exp(x)
 
-    // multiply by power of 2 
+    // multiply by power of 2
     n2 = vm_pow2n(r);
 
     if (M1 == 0) {
@@ -232,7 +232,7 @@ static inline VTYPE exp_d(VTYPE const & initial_x) {
 #else
 
 // Pade expansion uses less code and fewer registers, but is slower
-template<class VTYPE, class BVTYPE, int M1, int BA> 
+template<class VTYPE, class BVTYPE, int M1, int BA>
 static inline VTYPE exp_d(VTYPE const & initial_x) {
 
     // define constants
@@ -369,18 +369,18 @@ static inline Vec8d exp10(Vec8d const & x) {
 // M1: 0 for exp, 1 for expm1
 // BA: 0 for exp, 1 for 0.5*exp, 2 for pow(2,x), 10 for pow(10,x)
 
-template<class VTYPE, class BVTYPE, int M1, int BA> 
+template<class VTYPE, class BVTYPE, int M1, int BA>
 static inline VTYPE exp_f(VTYPE const & initial_x) {
 
     // Taylor coefficients
     const float P0expf   =  1.f/2.f;
     const float P1expf   =  1.f/6.f;
     const float P2expf   =  1.f/24.f;
-    const float P3expf   =  1.f/120.f; 
-    const float P4expf   =  1.f/720.f; 
-    const float P5expf   =  1.f/5040.f; 
+    const float P3expf   =  1.f/120.f;
+    const float P4expf   =  1.f/720.f;
+    const float P5expf   =  1.f/5040.f;
 
-    VTYPE  x, r, x2, z, n2;                      // data vectors        
+    VTYPE  x, r, x2, z, n2;                      // data vectors
     BVTYPE inrange;                              // boolean vector
 
     // maximum abs(x), value depends on BA, defined below
@@ -419,12 +419,12 @@ static inline VTYPE exp_f(VTYPE const & initial_x) {
     }
 
     x2 = x * x;
-    z = polynomial_5(x,P0expf,P1expf,P2expf,P3expf,P4expf,P5expf);    
+    z = polynomial_5(x,P0expf,P1expf,P2expf,P3expf,P4expf,P5expf);
     z = mul_add(z, x2, x);                       // z *= x2;  z += x;
 
     if (BA == 1) r--;                            // 0.5 * exp(x)
 
-    // multiply by power of 2 
+    // multiply by power of 2
     n2 = vm_pow2n(r);
 
     if (M1 == 0) {
@@ -493,11 +493,17 @@ static inline Vec4f exp10(Vec4f const & x) {
 
 static inline Vec8f exp(Vec8f const & x) {
 #if defined(__AVX512ER__) && MAX_VECTOR_SIZE >= 512 // use faster 512 bit version
-    return _mm512_castps512_ps256(exp(Vec16f(_mm512_castps256_ps512(x))));
+  return _mm512_castps512_ps256(exp(Vec16f(_mm512_castps256_ps512(x))));
 #else
-    return exp_f<Vec8f, Vec8fb, 0, 0>(x);
+  return exp_f<Vec8f, Vec8fb, 0, 0>(x);
 #endif
 }
+
+#if defined(__INTEL_COMPILER)
+static inline Vec8f expSVML(Vec8f const & x) {
+  return _mm256_exp_ps(x);
+}
+#endif
 
 static inline Vec8f expm1(Vec8f const & x) {
     return exp_f<Vec8f, Vec8fb, 1, 0>(x);
@@ -545,7 +551,7 @@ static inline Vec16f exp(Vec16f const & x) {
 #else  // no AVX512ER, use above template
     return exp_f<Vec16f, Vec16fb, 0, 0>(x);
 #endif
-} 
+}
 
 static inline Vec16f expm1(Vec16f const & x) {
     return exp_f<Vec16f, Vec16fb, 1, 0>(x);
@@ -723,7 +729,7 @@ static inline Vec8f exponent_f(Vec8f const & x) {
     Vec8f  e = d - (pow2_23 + bias);             // subtract magic number and bias
     return e;
 #endif
-} 
+}
 
 // extract exponent of a positive number x as a floating point number
 static inline Vec4d exponent_f(Vec4d const & x) {
@@ -754,7 +760,7 @@ static inline Vec16f exponent_f(Vec16f const & x) {
 #else
     return Vec16f(exponent_f(x.get_low()), exponent_f(x.get_high()));
 #endif
-} 
+}
 
 // extract exponent of a positive number x as a floating point number
 static inline Vec8d exponent_f(Vec8d const & x) {
@@ -774,7 +780,7 @@ static inline Vec8d exponent_f(Vec8d const & x) {
 // VTYPE:  f.p. vector type
 // BVTYPE: boolean vector type
 // M1: 0 for log, 1 for log1p
-template<class VTYPE, class BVTYPE, int M1> 
+template<class VTYPE, class BVTYPE, int M1>
 static inline VTYPE log_d(VTYPE const & initial_x) {
 
     // define constants
@@ -801,7 +807,7 @@ static inline VTYPE log_d(VTYPE const & initial_x) {
     else {
         x1 = initial_x + 1.0;                    // log(x+1)
     }
-    // separate mantissa from exponent 
+    // separate mantissa from exponent
     // VTYPE x  = fraction(x1) * 0.5;
     x  = fraction_2(x1);
     fe = exponent_f(x1);
@@ -819,7 +825,7 @@ static inline VTYPE log_d(VTYPE const & initial_x) {
         x = select(fe==0., initial_x, x - 1.0);
     }
 
-    // rational form 
+    // rational form
     px  = polynomial_5 (x, P0log, P1log, P2log, P3log, P4log, P5log);
     x2  = x * x;
     px *= x * x2;
@@ -914,7 +920,7 @@ static inline Vec8d log10(Vec8d const & x) {
 // BVTYPE: boolean vector type
 // BTYPEI: boolean vector type for ITYPE
 // M1: 0 for log, 1 for log1p
-template<class VTYPE, class ITYPE, class BVTYPE, class BTYPEI, int M1> 
+template<class VTYPE, class ITYPE, class BVTYPE, class BTYPEI, int M1>
 static inline VTYPE log_f(VTYPE const & initial_x) {
 
     // define constants
@@ -941,7 +947,7 @@ static inline VTYPE log_f(VTYPE const & initial_x) {
         x1 = initial_x + 1.0f;                   // log(x+1)
     }
 
-    // separate mantissa from exponent 
+    // separate mantissa from exponent
     x = fraction_2(x1);
     e = exponent(x1);
 
@@ -1054,7 +1060,7 @@ static inline Vec16f log10(Vec16f const & x) {
 // ITYPE2: uint64_t integer vector type with same total number of bits
 // BVTYPE: boolean vector type
 // CR:     -1 for reciprocal cube root, 1 for cube root, 2 for cube root squared
-template<class VTYPE, class ITYPE, class ITYPE2, class BVTYPE, int CR> 
+template<class VTYPE, class ITYPE, class ITYPE2, class BVTYPE, int CR>
 static inline VTYPE cbrt_d(VTYPE const & x) {
     const int iter = 7;     // iteration count of x^(-1/3) loop
     int i;
@@ -1082,7 +1088,7 @@ static inline VTYPE cbrt_d(VTYPE const & x) {
         a = nmul_add(xa3, a2*a2, four_third*a);  // a = four_third*a - xa3*a2*a2;
     }
     // last iteration with better precision
-    a2 = a * a;    
+    a2 = a * a;
     a = mul_add(one_third, nmul_add(xa, a2*a2, a), a); // a = a + one_third*(a - xa*a2*a2);
 
     if (CR == -1) {  // reciprocal cube root
@@ -1162,7 +1168,7 @@ static inline Vec8d square_cbrt(Vec8d const & x) {
 // ITYPE:  uint32_t integer vector type
 // BVTYPE: boolean vector type
 // CR:     -1 for reciprocal cube root, 1 for cube root, 2 for cube root squared
-template<class VTYPE, class ITYPE, class BVTYPE, int CR> 
+template<class VTYPE, class ITYPE, class BVTYPE, int CR>
 static inline VTYPE cbrt_f(VTYPE const & x) {
 
     const int iter = 6;                          // iteration count of x^(-1/3) loop
@@ -1188,11 +1194,11 @@ static inline VTYPE cbrt_f(VTYPE const & x) {
 
     // Newton Raphson iteration
     for (i = 0; i < iter-1; i++) {
-        a2 = a*a;        
+        a2 = a*a;
         a = nmul_add(xa3, a2*a2, four_third*a);  // a = four_third*a - xa3*a2*a2;
     }
     // last iteration with better precision
-    a2 = a*a;    
+    a2 = a*a;
     a = mul_add(one_third, nmul_add(xa, a2*a2, a), a); //a = a + one_third*(a - xa*a2*a2);
 
     if (CR == -1) {                              // reciprocal cube root
@@ -1301,9 +1307,9 @@ static inline Vec2d wm_pow_case_x0(Vec2db const & xiszero, Vec2d const & y, Vec2
 // Calculate x to the power of y.
 
 // Precision is important here because rounding errors get multiplied by y.
-// The logarithm is calculated with extra precision, and the exponent is 
+// The logarithm is calculated with extra precision, and the exponent is
 // calculated separately.
-// The logarithm is calculated by Pad\E9 approximation with 6'th degree 
+// The logarithm is calculated by Pad\E9 approximation with 6'th degree
 // polynomials. A 7'th degree would be preferred for best precision by high y.
 // The alternative method: log(x) = z + z^3*R(z)/S(z), where z = 2(x-1)/(x+1)
 // did not give better precision.
@@ -1340,15 +1346,15 @@ static inline VTYPE pow_template_d(VTYPE const & x0, VTYPE const & y) {
     const double p2  = 1./2.;
     const double p3  = 1./6.;
     const double p4  = 1./24.;
-    const double p5  = 1./120.; 
-    const double p6  = 1./720.; 
-    const double p7  = 1./5040.; 
-    const double p8  = 1./40320.; 
-    const double p9  = 1./362880.; 
-    const double p10 = 1./3628800.; 
-    const double p11 = 1./39916800.; 
-    const double p12 = 1./479001600.; 
-    const double p13 = 1./6227020800.; 
+    const double p5  = 1./120.;
+    const double p6  = 1./720.;
+    const double p7  = 1./5040.;
+    const double p8  = 1./40320.;
+    const double p9  = 1./362880.;
+    const double p10 = 1./3628800.;
+    const double p11 = 1./39916800.;
+    const double p12 = 1./479001600.;
+    const double p13 = 1./6227020800.;
 
     // data vectors
     VTYPE x, x1, x2;
@@ -1365,7 +1371,7 @@ static inline VTYPE pow_template_d(VTYPE const & x0, VTYPE const & y) {
     // remove sign
     x1 = abs(x0);
 
-    // Separate mantissa from exponent 
+    // Separate mantissa from exponent
     // This gives the mantissa * 0.5
     x  = fraction_2(x1);
 
@@ -1381,7 +1387,7 @@ static inline VTYPE pow_template_d(VTYPE const & x0, VTYPE const & y) {
     px *= x * x2;
     qx = polynomial_6n (x, Q0logl, Q1logl, Q2logl, Q3logl, Q4logl, Q5logl);
     lg1 = px / qx;
- 
+
     // extract exponent
     ef = exponent_f(x1);
     ef = if_add(blend, ef, 1.);                  // conditional add
@@ -1586,9 +1592,9 @@ static inline VTYPE pow_template_f(VTYPE const & x0, VTYPE const & y) {
     const float p2expf   =  1.f/2.f;
     const float p3expf   =  1.f/6.f;
     const float p4expf   =  1.f/24.f;
-    const float p5expf   =  1.f/120.f; 
-    const float p6expf   =  1.f/720.f; 
-    const float p7expf   =  1.f/5040.f; 
+    const float p5expf   =  1.f/120.f;
+    const float p6expf   =  1.f/720.f;
+    const float p7expf   =  1.f/5040.f;
 
     // data vectors
     VTYPE x, x1, x2;
@@ -1605,7 +1611,7 @@ static inline VTYPE pow_template_f(VTYPE const & x0, VTYPE const & y) {
     // remove sign
     x1 = abs(x0);
 
-    // Separate mantissa from exponent 
+    // Separate mantissa from exponent
     // This gives the mantissa * 0.5
     x  = fraction_2(x1);
 
@@ -1617,8 +1623,8 @@ static inline VTYPE pow_template_f(VTYPE const & x0, VTYPE const & y) {
     x   -= 1.0f;
     x2   = x * x;
     lg1  = polynomial_8(x, P0logf, P1logf, P2logf, P3logf, P4logf, P5logf, P6logf, P7logf, P8logf);
-    lg1 *= x2 * x; 
- 
+    lg1 *= x2 * x;
+
     // extract exponent
     ef = exponent_f(x1);
     ef = if_add(blend, ef, 1.0f);                // conditional add
@@ -1780,7 +1786,7 @@ public:
     Vec4f pow(Vec4f const & x) {
         Vec4f y = x;
         // negative x allowed when b odd or a even
-        // (if a is even then either b is odd or a/b can be reduced, 
+        // (if a is even then either b is odd or a/b can be reduced,
         // but we can check a even anyway at no cost to be sure)
         if (a == 0) return 1.f;
         if ((b | ~a) & 1) y = abs(y);
@@ -1865,7 +1871,7 @@ template<>
 class Power_rational<1,2> {
 public:
     template<class VTYPE>
-    VTYPE pow(VTYPE const & x) {        
+    VTYPE pow(VTYPE const & x) {
         return sqrt(x);
     }
 };
@@ -1875,7 +1881,7 @@ template<>
 class Power_rational<-1,2> {
 public:
     template<class VTYPE>
-    VTYPE pow(VTYPE const & x) {        
+    VTYPE pow(VTYPE const & x) {
         // (this is faster than iteration method on modern CPUs)
         return VTYPE(1.f) / sqrt(x);
     }
@@ -2132,7 +2138,7 @@ static inline Vec4q nan_code(Vec4d const & x) {
     return a & n & Vec4q(b);                     // isolate NAN code bits
 }
 
-#endif // MAX_VECTOR_SIZE >= 256 
+#endif // MAX_VECTOR_SIZE >= 256
 #if MAX_VECTOR_SIZE >= 512
 
 // This function returns the code hidden in a NAN. The sign bit is ignored

@@ -85,3 +85,35 @@ void ippExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
 }
 
 #endif
+
+
+#if defined(__INTEL_COMPILER)
+
+#include <immintrin.h>
+
+void svmlExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
+{
+  auto total_size = vec.size();
+
+  unsigned int num_chunks = total_size / VecSize;
+
+  unsigned int remainder = total_size % VecSize;
+
+  auto out_array = out_vec.data();
+
+  for (unsigned int chunk = 0; chunk < num_chunks; chunk++)
+  {
+    a.load(&vec[chunk*VecSize]);
+    b = expSVML(a);
+    b.store(out_array + (chunk * VecSize));
+  }
+
+  // The remaineder
+  if (remainder)
+  {
+    a.load_partial(remainder, &vec[num_chunks*VecSize]);
+    b = expSVML(a);
+    b.store_partial(remainder, (out_array + (num_chunks * VecSize)));
+  }
+}
+#endif

@@ -58,6 +58,14 @@ int main()
   std::chrono::duration<Real> ipp_duration = std::chrono::high_resolution_clock::now() - start;
 #endif
 
+#if defined(__INTEL_COMPILER)
+  std::cout<<"Starting SVML"<<std::endl;
+  start = std::chrono::high_resolution_clock::now();
+  for (long unsigned int i = 0; i < its; i++)
+    svmlExp(vals, outvals);
+  std::chrono::duration<Real> svml_duration = std::chrono::high_resolution_clock::now() - start;
+#endif
+
   std::cout<<"normal: "<<normal_duration.count()<<std::endl;
 
   if (its * NumValues < 1e8)
@@ -69,5 +77,9 @@ int main()
 
 #ifdef USE_IPP
   std::cout<<"ipp: "<<ipp_duration.count()<<std::endl;
+#endif
+
+#if defined(__INTEL_COMPILER)
+  std::cout<<"svml: "<<svml_duration.count()<<std::endl;
 #endif
 }
