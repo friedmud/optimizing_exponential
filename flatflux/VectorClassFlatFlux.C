@@ -134,7 +134,7 @@ VectorClassFlatFlux::onSegment()
       _current_angular_flux -= _current_delta_angular_flux;
 
       // current_scalar_flux[g] += scalar_flux_multiplier * current_delta_angular_flux[g];
-      _current_scalar_flux += _current_delta_angular_flux * scalar_flux_multiplier;
+      _current_scalar_flux =  mul_add(scalar_flux_multiplier, _current_delta_angular_flux, _current_scalar_flux);
 
       // Store the results back out
       _current_angular_flux.store(&current_angular_flux[group_index]);
