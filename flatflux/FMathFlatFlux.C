@@ -67,23 +67,23 @@ FMathFlatFlux::onSegment()
 
     Real segment_length = tracking_segment_length / polar_sin;
 
-#pragma clang loop vectorize_width(8) interleave_count(8)
+#pragma clang loop vectorize_width(4) interleave_count(4)
     for (unsigned int g = 0; g < _num_groups; g++)
       _exp_tau[g] = -segment_length * _sigma_t[g];
 
-#pragma clang loop vectorize_width(8) interleave_count(8)
+#pragma clang loop vectorize_width(4) interleave_count(4)
     for (unsigned int g = 0; g < _num_groups; g++)
       _exp_tau[g] = fmath::expd(_exp_tau[g]);
 
-#pragma clang loop vectorize_width(8) interleave_count(8)
+#pragma clang loop vectorize_width(4) interleave_count(4)
     for (unsigned int g = 0; g < _num_groups; g++)
       _exp_tau[g] = 1. - _exp_tau[g];
 
-#pragma clang loop vectorize_width(8) interleave_count(8)
+#pragma clang loop vectorize_width(4) interleave_count(4)
     for (unsigned int g = 0; g < _num_groups; g++)
       current_delta_angular_flux[g] = (current_angular_flux[g] - current_Q[g]) * _exp_tau[g];
 
-#pragma clang loop vectorize_width(8) interleave_count(8)
+#pragma clang loop vectorize_width(4) interleave_count(4)
     for (unsigned int g = 0; g < _num_groups; g++)
       current_angular_flux[g] -= current_delta_angular_flux[g];
 
@@ -92,25 +92,20 @@ FMathFlatFlux::onSegment()
       const Real scalar_flux_multiplier = 4.0 * PI * _azimuthal_spacing * _polar_spacing *
                                           _azimuthal_weight * polar_weight * polar_sin;
 
-      /*
-#pragma clang loop vectorize_width(8) interleave_count(8)
+#pragma clang loop vectorize_width(4) interleave_count(4)
       for (unsigned int g = 0; g < _num_groups; g++)
         current_scalar_flux[g] += scalar_flux_multiplier * current_delta_angular_flux[g];
-      */
 
-      /*
       _fsr_volumes[_current_fsr_offset] += _azimuthal_spacing * _azimuthal_weight *
                                            tracking_segment_length * 0.5 * _polar_spacing *
                                            polar_weight;
-      */
     }
   }
-/*
+
   auto integrated_distance = 10023;
 
   if (-1 > _dead_zone)
-#pragma clang loop vectorize_width(8) interleave_count(8)
+#pragma clang loop vectorize_width(4) interleave_count(4)
     for (unsigned int p = 0; p < _num_polar; p++)
       integrated_distance += tracking_segment_length;
-*/
 }

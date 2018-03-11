@@ -1,6 +1,8 @@
 #include "OptimizedFlatFlux.h"
 #include "FMathFlatFlux.h"
 #include "MKLFlatFlux.h"
+#include "VectorExpFlatFlux.h"
+#include "VectorClassFlatFlux.h"
 
 #include <chrono>
 #include <iostream>
@@ -48,7 +50,26 @@ void test_flat_flux()
     mklff.onSegment();
   std::chrono::duration<Real> mkl_duration = std::chrono::high_resolution_clock::now() - start;
 
+  VectorExpFlatFlux veff(scalar_flux, fsr_solution, Q);
+
+  std::cout<<"Starting VectorExp"<<std::endl;
+  start = std::chrono::high_resolution_clock::now();
+  for (unsigned long int s = 0; s < NUM_SEGMENTS; s++)
+    veff.onSegment();
+  std::chrono::duration<Real> vector_exp_duration = std::chrono::high_resolution_clock::now() - start;
+
+  VectorClassFlatFlux vcff(scalar_flux, fsr_solution, Q);
+
+  std::cout<<"Starting VectorClass"<<std::endl;
+  start = std::chrono::high_resolution_clock::now();
+  for (unsigned long int s = 0; s < NUM_SEGMENTS; s++)
+    vcff.onSegment();
+  std::chrono::duration<Real> vector_class_duration = std::chrono::high_resolution_clock::now() - start;
+
   std::cout<<"optmized: "<<optimized_duration.count()<<std::endl;
   std::cout<<"fmath: "<<fmath_duration.count()<<std::endl;
   std::cout<<"mkl: "<<mkl_duration.count()<<std::endl;
+  std::cout<<"vector exp: "<<vector_exp_duration.count()<<std::endl;
+  std::cout<<"vector class: "<<vector_class_duration.count()<<std::endl;
+
 }

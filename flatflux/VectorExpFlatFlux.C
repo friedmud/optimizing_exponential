@@ -12,12 +12,12 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "FlatFlux.h"
+#include "VectorExpFlatFlux.h"
 
 #include<cmath>
 #include<iostream>
 
-FlatFlux::FlatFlux(std::vector<Real> & scalar_flux, std::vector<Real> & fsr_solution, std::vector<Real> & Q) :
+VectorExpFlatFlux::VectorExpFlatFlux(std::vector<Real> & scalar_flux, std::vector<Real> & fsr_solution, std::vector<Real> & Q) :
     _dead_zone(0),
     _num_groups(NUM_GROUPS),
     _num_polar(NUM_POLAR),
@@ -37,10 +37,44 @@ FlatFlux::FlatFlux(std::vector<Real> & scalar_flux, std::vector<Real> & fsr_solu
     _angular_flux[i] = (double)i/(double)230;
 }
 
-FlatFlux::~FlatFlux() {}
+VectorExpFlatFlux::~VectorExpFlatFlux() {}
+
+namespace
+{
+  Vec4d a;
+  Vec4d b;
+}
+
+#define VecSize 4
+
+inline void vectorizedExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
+{
+  auto total_size = vec.size();
+
+  unsigned int num_chunks = total_size / VecSize;
+
+  unsigned int remainder = total_size % VecSize;
+
+  auto out_array = out_vec.data();
+
+  for (unsigned int chunk = 0; chunk < num_chunks; chunk++)
+  {
+    a.load(&vec[chunk*VecSize]);
+    b = exp(a);
+    b.store(out_array + (chunk * VecSize));
+  }
+
+  // The remaineder
+  if (remainder)
+  {
+    a.load_partial(remainder, &vec[num_chunks*VecSize]);
+    b = exp(a);
+    b.store_partial(remainder, (out_array + (num_chunks * VecSize)));
+  }
+}
 
 void
-FlatFlux::onSegment()
+VectorExpFlatFlux::onSegment()
 {
   Real tracking_segment_length = 1.1;
 
@@ -69,9 +103,7 @@ FlatFlux::onSegment()
     for (unsigned int g = 0; g < _num_groups; g++)
       _exp_tau[g] = -segment_length * _sigma_t[g];
 
-#pragma clang loop vectorize_width(4) interleave_count(4)
-    for (unsigned int g = 0; g < _num_groups; g++)
-      _exp_tau[g] = std::exp(_exp_tau[g]);
+    vectorizedExp(_exp_tau, _exp_tau);
 
 #pragma clang loop vectorize_width(4) interleave_count(4)
     for (unsigned int g = 0; g < _num_groups; g++)
