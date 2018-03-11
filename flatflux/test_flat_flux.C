@@ -3,6 +3,7 @@
 #include "MKLFlatFlux.h"
 #include "VectorExpFlatFlux.h"
 #include "VectorClassFlatFlux.h"
+#include "IntelVectorClassFlatFlux.h"
 
 #include <chrono>
 #include <iostream>
@@ -66,10 +67,20 @@ void test_flat_flux()
     vcff.onSegment();
   std::chrono::duration<Real> vector_class_duration = std::chrono::high_resolution_clock::now() - start;
 
+  IntelVectorClassFlatFlux ivcff(scalar_flux, fsr_solution, Q);
+
+  std::cout<<"Starting IntelVectorClass"<<std::endl;
+  start = std::chrono::high_resolution_clock::now();
+  for (unsigned long int s = 0; s < NUM_SEGMENTS; s++)
+    ivcff.onSegment();
+  std::chrono::duration<Real> intel_vector_class_duration = std::chrono::high_resolution_clock::now() - start;
+
+
   std::cout<<"optmized: "<<optimized_duration.count()<<std::endl;
   std::cout<<"fmath: "<<fmath_duration.count()<<std::endl;
   std::cout<<"mkl: "<<mkl_duration.count()<<std::endl;
   std::cout<<"vector exp: "<<vector_exp_duration.count()<<std::endl;
   std::cout<<"vector class: "<<vector_class_duration.count()<<std::endl;
+  std::cout<<"intel vector class: "<<intel_vector_class_duration.count()<<std::endl;
 
 }

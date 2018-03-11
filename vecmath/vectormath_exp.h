@@ -503,6 +503,9 @@ static inline Vec8f exp(Vec8f const & x) {
 static inline Vec8f expSVML(Vec8f const & x) {
   return _mm256_exp_ps(x);
 }
+static inline Vec4d expSVML(Vec4d const & x) {
+  return _mm256_exp_pd(x);
+}
 #endif
 
 static inline Vec8f expm1(Vec8f const & x) {

@@ -1,4 +1,4 @@
 #icc -std=c++11 -O3 -march=native -mkl=sequential -ipp -D USE_IPP test.C impls.C
 #icc -std=c++11 -O3 -march=native -I fmath -I vecmath -mkl=sequential test.C impls.C
 
-icc -std=c++11 -O3 -march=native -I fmath -I vecmath -mkl=sequential -ipp -D USE_IPP test.C impls.C
+icc -std=c++11 -O3 -march=native -I flatflux -I fmath -I vecmath -mkl=sequential -ipp -D USE_IPP test.C impls.C test_impls.C flatflux/*.C
