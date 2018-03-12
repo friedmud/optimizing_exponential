@@ -12,12 +12,12 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "VectorClassFlatFlux.h"
+#include "FloatVectorClassFlatFlux.h"
 
 #include<cmath>
 #include<iostream>
 
-VectorClassFlatFlux::VectorClassFlatFlux(std::vector<Real> & scalar_flux, std::vector<Real> & fsr_solution, std::vector<Real> & Q) :
+FloatVectorClassFlatFlux::FloatVectorClassFlatFlux(std::vector<float> & scalar_flux, std::vector<float> & fsr_solution, std::vector<float> & Q) :
     _dead_zone(0),
     _num_groups(NUM_GROUPS),
     _num_polar(NUM_POLAR),
@@ -37,18 +37,18 @@ VectorClassFlatFlux::VectorClassFlatFlux(std::vector<Real> & scalar_flux, std::v
     _angular_flux[i] = (double)i/(double)230;
 }
 
-VectorClassFlatFlux::~VectorClassFlatFlux() {}
+FloatVectorClassFlatFlux::~FloatVectorClassFlatFlux() {}
 
 namespace
 {
-Vec4d a;
-Vec4d b;
+Vec8f a;
+Vec8f b;
 }
 
 
-#define VecSize 4
-
-inline void vectorizedExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
+#define VecSize 8
+/*
+inline void vectorizedExp(std::vector<float> & vec, std::vector<float> & out_vec)
 {
   auto total_size = vec.size();
 
@@ -73,20 +73,21 @@ inline void vectorizedExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
     b.store_partial(remainder, (out_array + (num_chunks * VecSize)));
   }
 }
+*/
 
 void
-VectorClassFlatFlux::onSegment()
+FloatVectorClassFlatFlux::onSegment()
 {
-  Real tracking_segment_length = 1.1;
+  float tracking_segment_length = 1.1;
 
   for (unsigned int p = 0; p < _num_polar; p++)
   {
     // Storing this locally enables vectorization
     const unsigned int current_offset = _current_offset;
 
-    const Real polar_sin = _polar_sins[p];
+    const float polar_sin = _polar_sins[p];
 
-    const Real polar_weight = _polar_weights[p];
+    const float polar_weight = _polar_weights[p];
 
     const unsigned int angular_offset = p * _num_groups;
 
@@ -98,9 +99,9 @@ VectorClassFlatFlux::onSegment()
 
     auto current_delta_angular_flux = &_delta_angular_flux[0];
 
-    Real segment_length = tracking_segment_length / polar_sin;
+    float segment_length = tracking_segment_length / polar_sin;
 
-    const Real scalar_flux_multiplier = 4.0 * PI * _azimuthal_spacing * _polar_spacing *
+    const float scalar_flux_multiplier = 4.0 * PI * _azimuthal_spacing * _polar_spacing *
       _azimuthal_weight * polar_weight * polar_sin;
 
     // For vectorization
