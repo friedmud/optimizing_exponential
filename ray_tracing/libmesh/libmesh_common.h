@@ -49,6 +49,8 @@
 #include <typeinfo> // std::bad_cast
 
 
+#undef LIBMESH_HAVE_MPI
+
 // Include the MPI definition
 #ifdef LIBMESH_HAVE_MPI
 # include "libmesh/ignore_warnings.h"
@@ -95,7 +97,6 @@ namespace MacroFunctions
 {
 void here(const char * file, int line, const char * date, const char * time);
 void stop(const char * file, int line, const char * date, const char * time);
-void report_error(const char * file, int line, const char * date, const char * time);
 }
 
 // Undefine any existing macros
@@ -373,7 +374,6 @@ extern bool warned_about_auto_ptr;
     std::cerr << msg << std::endl;                                   \
     std::stringstream msg_stream;                                       \
     msg_stream << msg;                                                  \
-    libMesh::MacroFunctions::report_error(__FILE__, __LINE__, LIBMESH_DATE, LIBMESH_TIME); \
     LIBMESH_THROW(libMesh::LogicError(msg_stream.str()));               \
   } while (0)
 
@@ -382,7 +382,6 @@ extern bool warned_about_auto_ptr;
 #define libmesh_exceptionless_error_msg(msg)                            \
   do {                                                                  \
     std::cerr << msg << std::endl;                                   \
-    libMesh::MacroFunctions::report_error(__FILE__, __LINE__, LIBMESH_DATE, LIBMESH_TIME); \
     std::terminate();                                                   \
   } while (0)
 
@@ -391,7 +390,6 @@ extern bool warned_about_auto_ptr;
 #define libmesh_not_implemented_msg(msg)                                \
   do {                                                                  \
     std::cerr << msg << std::endl;                                   \
-    libMesh::MacroFunctions::report_error(__FILE__, __LINE__, LIBMESH_DATE, LIBMESH_TIME); \
     LIBMESH_THROW(libMesh::NotImplemented());                           \
   } while (0)
 
@@ -400,7 +398,6 @@ extern bool warned_about_auto_ptr;
 #define libmesh_file_error_msg(filename, msg)                           \
   do {                                                                  \
     std::cerr << "Error with file `" << filename << "'" << std::endl; \
-    libMesh::MacroFunctions::report_error(__FILE__, __LINE__, LIBMESH_DATE, LIBMESH_TIME); \
     std::cerr << msg << std::endl;                                   \
     LIBMESH_THROW(libMesh::FileError(filename));                        \
   } while (0)
