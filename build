@@ -1,1 +1,1 @@
-clang++ -std=c++11 -g -O3 -march=native -I flatflux -I fmath -I vecmath -Wl,-rpath,$MKLROOT/lib/ -L$MKLROOT/lib/ -lmkl_rt -I $IPPROOT/include -L $IPPROOT/lib -lippi -lipps -lippcore -lippvm -D USE_IPP test.C impls.C test_impls.C flatflux/*.C -I ray_tracing ray_tracing/*.C
+clang++ -std=c++11 -O3 -g -march=native -D NDEBUG -I flatflux -I fmath -I vecmath -Wl,-rpath,$MKLROOT/lib/ -L$MKLROOT/lib/ -lmkl_rt -I $IPPROOT/include -L $IPPROOT/lib -lippi -lipps -lippcore -lippvm -D USE_IPP test.C impls.C test_impls.C flatflux/*.C -I ray_tracing ray_tracing/*.C

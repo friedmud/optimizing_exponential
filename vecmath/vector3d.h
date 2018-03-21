@@ -267,10 +267,10 @@ public:
     Vec3d() {
     }
     // construct from three coordinates
-    Vec3d(double x, double y, double z) 
+    Vec3d(double x, double y, double z)
         : Vec4d(x, y, z, 0.) {}
     // Constructor to convert from Vec4d
-    Vec3d(Vec4d const & x) 
+    Vec3d(Vec4d const & x)
         : Vec4d(x) {
         // cutoff(3);
     }
@@ -474,10 +474,26 @@ static inline Vec3d cross_product (Vec3d const & a, Vec3d const & b) {
     return c.cutoff(3);
 }
 
+/*
 // function dot_product
 static inline double dot_product (Vec3d const & a, Vec3d const & b) {
     Vec4d c  = (Vec4d(a) * Vec4d(b)).cutoff(3);
     return horizontal_add(c);
+}
+*/
+
+// Better dot product from: https://stackoverflow.com/a/47445367
+static inline double dot_product (Vec3d const & x, Vec3d const & y) {
+  __m256d xy = _mm256_mul_pd(x, y);
+
+  __m128d xylow  = _mm256_castpd256_pd128(xy);   // (__m128d)cast isn't portable
+  __m128d xyhigh = _mm256_extractf128_pd(xy, 1);
+  __m128d sum1 =   _mm_add_pd(xylow, xyhigh);
+
+  __m128d swapped = _mm_shuffle_pd(sum1, sum1, 0b01);   // or unpackhi
+  __m128d dotproduct = _mm_add_pd(sum1, swapped);
+
+  return _mm_cvtsd_f64(dotproduct);
 }
 
 // function vector_length
