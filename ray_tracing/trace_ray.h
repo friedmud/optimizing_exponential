@@ -8,6 +8,8 @@
 
 using namespace libMesh;
 
+extern unsigned int count;
+
 // https://people.cs.kuleuven.be/~ares.lagae/publications/LD05ERQIT/LD05ERQIT_code.cpp
 template<typename PointType>
 bool
@@ -21,6 +23,8 @@ intersectQuad(const PointType & O,
               Real & v,
               Real & t)
 {
+  count++;
+
   // Reject rays using the barycentric coordinates of // the intersection point with respect to T.
   auto E01 = V10;
   E01 -= V00;

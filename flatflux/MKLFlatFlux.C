@@ -11,8 +11,9 @@
 /*                                                              */
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
-
 #include "MKLFlatFlux.h"
+
+#ifdef __INTEL_MKL__
 
 #include "mkl.h"
 
@@ -107,3 +108,5 @@ MKLFlatFlux::onSegment()
     for (unsigned int p = 0; p < _num_polar; p++)
       integrated_distance += tracking_segment_length;
 }
+
+#endif

@@ -15,6 +15,8 @@
 #ifndef MKLFLATFLUX_H
 #define MKLFLATFLUX_H
 
+#ifdef __INTEL_MKL__
+
 #include "flat_flux_common.h"
 
 #include <vector>
@@ -78,5 +80,7 @@ protected:
 
   std::vector<double> _sigma_t;
 };
+
+#endif
 
 #endif /* MKLFLATFLUX_H */

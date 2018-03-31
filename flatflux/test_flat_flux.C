@@ -59,6 +59,7 @@ void test_flat_flux()
     fmff.onSegment();
   std::chrono::duration<Real> fmath_duration = std::chrono::high_resolution_clock::now() - start;
 
+  #ifdef __INTEL_MKL__
   MKLFlatFlux mklff(scalar_flux, fsr_solution, Q);
 
   std::cout<<"Starting MKL"<<std::endl;
@@ -66,6 +67,7 @@ void test_flat_flux()
   for (unsigned long int s = 0; s < NUM_SEGMENTS; s++)
     mklff.onSegment();
   std::chrono::duration<Real> mkl_duration = std::chrono::high_resolution_clock::now() - start;
+  #endif
 
   VectorExpFlatFlux veff(scalar_flux, fsr_solution, Q);
 
@@ -104,7 +106,11 @@ void test_flat_flux()
 
   std::cout<<"optmized: "<<optimized_duration.count()<<std::endl;
   std::cout<<"fmath: "<<fmath_duration.count()<<std::endl;
+
+  #ifdef __INTEL_MKL__
   std::cout<<"mkl: "<<mkl_duration.count()<<std::endl;
+  #endif
+
   std::cout<<"vector exp: "<<vector_exp_duration.count()<<std::endl;
   std::cout<<"vector class: "<<vector_class_duration.count()<<std::endl;
 

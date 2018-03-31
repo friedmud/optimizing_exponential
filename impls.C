@@ -2,7 +2,9 @@
 
 #include <valarray>
 
+#ifdef USE_MKL
 #include "mkl.h"
+#endif
 
 #ifdef USE_IPP
 #include "ippcore.h"
@@ -72,10 +74,12 @@ void vectorizedExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
   }
 }
 
+#ifdef __INTEL_MKL__
 void mklExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
 {
   vsExp(vec.size(), vec.data(), out_vec.data());
 }
+#endif
 
 #ifdef USE_IPP
 

@@ -44,11 +44,13 @@ void test_impls()
     vectorizedExp(vals, outvals);
   std::chrono::duration<Real> vectorized_duration = std::chrono::high_resolution_clock::now() - start;
 
+#ifdef __INTEL_MKL__
   std::cout<<"Starting MKL"<<std::endl;
   start = std::chrono::high_resolution_clock::now();
   for (long unsigned int i = 0; i < its; i++)
     mklExp(vals, outvals);
   std::chrono::duration<Real> mkl_duration = std::chrono::high_resolution_clock::now() - start;
+#endif
 
 #ifdef USE_IPP
   std::cout<<"Starting IPP"<<std::endl;
@@ -73,7 +75,10 @@ void test_impls()
 
   std::cout<<"fmath: "<<fmath_duration.count()<<std::endl;
   std::cout<<"vectorized: "<<vectorized_duration.count()<<std::endl;
+
+#ifdef __INTEL_MKL__
   std::cout<<"mkl: "<<mkl_duration.count()<<std::endl;
+#endif
 
 #ifdef USE_IPP
   std::cout<<"ipp: "<<ipp_duration.count()<<std::endl;

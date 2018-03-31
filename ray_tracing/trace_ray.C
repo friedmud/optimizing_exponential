@@ -2,3 +2,5 @@
 #include "libmesh/point.h"
 
 using namespace libMesh;
+
+unsigned int count = 0;
