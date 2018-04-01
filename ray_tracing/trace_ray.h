@@ -810,3 +810,111 @@ intersectQuadUsingTriangles(const PointType & O,
   else
     return rayIntersectsTriangle(O, D, V11, V01, V00, u, v, t);
 }
+
+
+class Hand
+{
+public:
+
+  Vec3d edge1, edge2, h, s, q;
+  Vec3d O, D, V00, V10, V11, V01;
+
+  Real temp_O[4];
+  Real temp_D[4];
+  Real temp_V00[4];
+  Real temp_V10[4];
+  Real temp_V11[4];
+  Real temp_V01[4];
+
+
+bool
+rayIntersectsTriangleHand(const Vec3d & O,
+                          const Vec3d & D,
+                          const Vec3d & V00,
+                          const Vec3d & V10,
+                          const Vec3d & V11,
+                          Real & u,
+                          Real & v,
+                          Real & t)
+{
+  const Real EPSILON = 0.0000001;
+  const Vec3d & vertex0 = V00;
+  const Vec3d & vertex1 = V10;
+  const Vec3d & vertex2 = V11;
+
+  const Vec3d & rayOrigin = O;
+  const Vec3d & rayVector = D;
+
+
+  Real a, f;
+
+  edge1 = vertex1 - vertex0;
+  edge2 = vertex2 - vertex0;
+  h = cross_product(rayVector,edge2);
+  a = dot_product(edge1,h);
+  if (a > -EPSILON && a < EPSILON)
+    return false;
+  f = 1 / a;
+  s = rayOrigin - vertex0;
+  u = f * dot_product(s,h);
+  if (u < -EPSILON || u > 1. + EPSILON)
+    return false;
+  q = cross_product(s,edge1);
+  v = dot_product(rayVector,q) * f;
+  if (v < -EPSILON || u + v > 1. + EPSILON)
+    return false;
+  // At this stage we can compute t to find out where the intersection point is on the line.
+  t = dot_product(edge2,q) * f;
+  if (t > -EPSILON) // ray intersection
+    return true;
+  else // This means that there is a line intersection but not a ray intersection.
+    return false;
+}
+
+
+
+template<typename PointType>
+bool
+intersectQuadUsingTrianglesHand(const PointType & in_O,
+                                const PointType & in_D,
+                                const PointType & in_V00,
+                                const PointType & in_V10,
+                                const PointType & in_V11,
+                                const PointType & in_V01,
+                                Real & u,
+                                Real & v,
+                                Real & t)
+{
+  /*
+  auto normal = (V10 - V00).cross(V11 - V10);
+
+  // Backface culling
+  if (D * normal > -TOLERANCE)
+    return false;
+  */
+
+  for (unsigned int i = 0; i < LIBMESH_DIM; i++)
+  {
+    temp_O[i] = in_O(i);
+    temp_D[i] = in_D(i);
+    temp_V00[i] = in_V00(i);
+    temp_V10[i] = in_V10(i);
+    temp_V11[i] = in_V11(i);
+    temp_V01[i] = in_V01(i);
+  }
+
+  O.load(temp_O);
+  D.load(temp_D);
+  V00.load(temp_V00);
+  V10.load(temp_V10);
+  V11.load(temp_V11);
+  V01.load(temp_V01);
+
+
+  if (rayIntersectsTriangleHand(O, D, V00, V10, V11, u, v, t))
+    return true;
+  else
+    return rayIntersectsTriangleHand(O, D, V11, V01, V00, u, v, t);
+}
+
+};
