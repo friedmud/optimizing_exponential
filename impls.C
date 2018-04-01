@@ -11,8 +11,8 @@
 #include "ippvm.h"
 #endif
 
-Vec8f a;
-Vec8f b;
+Vec4d a;
+Vec4d b;
 
 void normalExp(std::vector<Real> & vec, std::vector<Real> & out_vec)
 {

@@ -13,9 +13,9 @@
 
 #include "fmath/fmath.h"
 
-#define Real float
-#define VecSize 8
-#define NumValues 7
+#define Real double
+#define VecSize 4
+#define NumValues 32
 
 void normalExp(std::vector<Real> & vec, std::vector<Real> & out_vec);
 void valarrayExp(std::vector<Real> & vec, std::vector<Real> & out_vec);
