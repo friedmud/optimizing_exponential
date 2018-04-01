@@ -36,6 +36,8 @@ intersectQuad(const PointType & O,
 
   auto det = E01 * P;
 
+//  std::cout<<"det: "<<det<<std::endl;
+
   //  libMesh::err<<"Count: "<<count<<std::endl;
 
   if (std::abs(det) < TOLERANCE)
@@ -499,7 +501,7 @@ intersectQuadHandVectorized(const PointType & in_O,
   O.load(temp_O);
   D.load(temp_D);
   V00.load(temp_V00);
-  V10.load(temp_V01);
+  V10.load(temp_V10);
   V11.load(temp_V11);
   V01.load(temp_V01);
 
@@ -511,6 +513,8 @@ intersectQuadHandVectorized(const PointType & in_O,
   auto P = cross_product(D, E03);
 
   auto det = dot_product(E01, P);
+
+//  std::cout<<"det: "<<det<<std::endl;
 
   //  libMesh::err<<"Count: "<<count<<std::endl;
 
@@ -528,6 +532,8 @@ intersectQuadHandVectorized(const PointType & in_O,
   auto T = O - V00;
 
   auto alpha = dot_product(T,P) / det;
+
+//  std::cout<<"alpha: "<<alpha<<std::endl;
 
   if (alpha < -1e-12)
   {
@@ -555,6 +561,8 @@ intersectQuadHandVectorized(const PointType & in_O,
   // Compute the ray parameter of the intersection // point.
   t = dot_product(E03, Q) / det;
 
+//  std::cout<<"t: "<<t<<std::endl;
+
   if (t < -1e-12)
   {
 #ifdef USE_DEBUG_RAY
@@ -569,6 +577,8 @@ intersectQuadHandVectorized(const PointType & in_O,
 
 
   auto beta = dot_product(D, Q) / det;
+
+//  std::cout<<"beta: "<<beta<<std::endl;
 
   if (beta < -1e-12)
   {
@@ -725,4 +735,78 @@ intersectQuadHandVectorized(const PointType & in_O,
 //  std::cout<<"Here 14"<<std::endl;
 
   return true;
+}
+
+template<typename PointType>
+bool
+rayIntersectsTriangle(const PointType & O,
+                      const PointType & D,
+                      const PointType & V00,
+                      const PointType & V10,
+                      const PointType & V11,
+                      Real & u,
+                      Real & v,
+                      Real & t)
+{
+  const Real EPSILON = 0.0000001;
+  const PointType & vertex0 = V00;
+  const PointType & vertex1 = V10;
+  const PointType & vertex2 = V11;
+
+  const PointType & rayOrigin = O;
+  const PointType & rayVector = D;
+
+  PointType edge1, edge2, h, s, q;
+
+  Real a, f;
+
+  edge1 = vertex1 - vertex0;
+  edge2 = vertex2 - vertex0;
+  h = rayVector.cross(edge2);
+  a = edge1 * h;
+  if (a > -EPSILON && a < EPSILON)
+    return false;
+  f = 1 / a;
+  s = rayOrigin - vertex0;
+  u = f * (s * h);
+  if (u < -EPSILON || u > 1. + EPSILON)
+    return false;
+  q = s.cross(edge1);
+  v = (rayVector * q) * f;
+  if (v < -EPSILON || u + v > 1. + EPSILON)
+    return false;
+  // At this stage we can compute t to find out where the intersection point is on the line.
+  t = (edge2 * q) * f;
+  if (t > -EPSILON) // ray intersection
+    return true;
+  else // This means that there is a line intersection but not a ray intersection.
+    return false;
+}
+
+
+
+template<typename PointType>
+bool
+intersectQuadUsingTriangles(const PointType & O,
+                            const PointType & D,
+                            const PointType & V00,
+                            const PointType & V10,
+                            const PointType & V11,
+                            const PointType & V01,
+                            Real & u,
+                            Real & v,
+                            Real & t)
+{
+  /*
+  auto normal = (V10 - V00).cross(V11 - V10);
+
+  // Backface culling
+  if (D * normal > -TOLERANCE)
+    return false;
+  */
+
+  if (rayIntersectsTriangle(O, D, V00, V10, V11, u, v, t))
+    return true;
+  else
+    return rayIntersectsTriangle(O, D, V11, V01, V00, u, v, t);
 }
