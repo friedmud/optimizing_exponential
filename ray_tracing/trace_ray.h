@@ -737,6 +737,7 @@ intersectQuadHandVectorized(const PointType & in_O,
   return true;
 }
 
+// https://en.wikipedia.org/wiki/Möller–Trumbore_intersection_algorithm
 template<typename PointType>
 bool
 rayIntersectsTriangle(const PointType & O,
@@ -826,7 +827,7 @@ public:
   Real temp_V11[4];
   Real temp_V01[4];
 
-
+// https://en.wikipedia.org/wiki/Möller–Trumbore_intersection_algorithm
 bool
 rayIntersectsTriangleHand(const Vec3d & O,
                           const Vec3d & D,
