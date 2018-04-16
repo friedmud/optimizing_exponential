@@ -134,23 +134,13 @@ lineLineIntersect2DHand(const Point & o_in,
   auto r = rs.get_low();
   auto s = rs.get_high();
 
-//  std::cout<<"r[0]: "<<r[0]<<std::endl;
-//  std::cout<<"r[1]: "<<r[1]<<std::endl;
-
-//  std::cout<<"s[0]: "<<s[0]<<std::endl;
-//  std::cout<<"s[1]: "<<s[1]<<std::endl;
-
+  // 2D cross product
+  // v(0)*w(1) - v(1)*w(0)
   auto sp = permute2d<1,0>(s);
-
   auto begin_cross = r * sp;
-
   Real temp[2];
-
   begin_cross.store(temp);
-
   auto rxs = temp[0] - temp[1];
-
-//  std::cout<<"rxs: "<<rxs<<std::endl;
 
   if (std::abs(rxs) < 1e-10) // Lines are parallel or colinear
     false;
@@ -173,22 +163,13 @@ lineLineIntersect2DHand(const Point & o_in,
 
   auto top = lhs - rhs;
 
-  Real temp_top[2];
-  top.store(temp_top);
-
-//  std::cout<<"rcross: "<<temp_top[0]<<std::endl;
-//  std::cout<<"scross: "<<temp_top[1]<<std::endl;
-
   top /= rxs;
 
-//  Real temp_top[2];
+  Real temp_top[2];
   top.store(temp_top);
 
   t = temp_top[0];
   u = temp_top[1];
-
-//  std::cout<<"t: "<<t<<std::endl;
-//  std::cout<<"u: "<<u<<std::endl;
 
   if ((0 < t + 4e-9 && t - 4e-9 <= 1.0) &&
       (0 < u + 4e-9 && u - 4e-9 <= 1.0)) // Do they intersect
