@@ -13,8 +13,6 @@ lineLineIntersect2DVanilla(const Point & o,
   const Point & p = o;
   const Point & q = v0;
 
-  auto qmp = q - p;
-
   auto r = (d - o);
   auto s = (v1 - v0);
 
@@ -23,8 +21,10 @@ lineLineIntersect2DVanilla(const Point & o,
   if (std::abs(rxs) < 1e-10) // Lines are parallel or colinear
     false;
 
-  t = /*twodcross(qmp, s)*/ (qmp(0)*s(1)-qmp(1)*s(0)) / rxs;
-  u = /*twodcross(qmp, r)*/ (qmp(0)*r(1)-qmp(1)*r(0)) / rxs;
+  auto qmp = q - p;
+
+  t = (qmp(0)*s(1)-qmp(1)*s(0)) / rxs;
+  u = (qmp(0)*r(1)-qmp(1)*r(0)) / rxs;
 
   if ((0 < t + 4e-9 && t - 4e-9 <= 1.0) &&
       (0 < u + 4e-9 && u - 4e-9 <= 1.0)) // Do they intersect
@@ -47,8 +47,6 @@ lineLineIntersect2DVanilla(const VectorizedPoint & o,
   const VectorizedPoint & p = o;
   const VectorizedPoint & q = v0;
 
-  auto qmp = q - p;
-
   auto r = (d - o);
   auto s = (v1 - v0);
 
@@ -57,8 +55,10 @@ lineLineIntersect2DVanilla(const VectorizedPoint & o,
   if (std::abs(rxs) < 1e-10) // Lines are parallel or colinear
     false;
 
-  t = /*twodcross(qmp, s)*/ (qmp(0)*s(1)-qmp(1)*s(0)) / rxs;
-  u = /*twodcross(qmp, r)*/ (qmp(0)*r(1)-qmp(1)*r(0)) / rxs;
+  auto qmp = q - p;
+
+  t = (qmp(0)*s(1)-qmp(1)*s(0)) / rxs;
+  u = (qmp(0)*r(1)-qmp(1)*r(0)) / rxs;
 
   if ((0 < t + 4e-9 && t - 4e-9 <= 1.0) &&
       (0 < u + 4e-9 && u - 4e-9 <= 1.0)) // Do they intersect

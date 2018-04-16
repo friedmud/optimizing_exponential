@@ -69,7 +69,7 @@ void test_trace_ray()
     std::cout << "Starting Tuned" << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
     for (unsigned long int i=0; i < num_its; i++)
-      intersectQuadTuned<VectorizedPoint>(o, d, V00, V10, V11, V01, u, v, t);
+      intersectQuadTuned(o, d, V00, V10, V11, V01, u, v, t);
     tuned_duration = std::chrono::high_resolution_clock::now() - start;
 
     std::cout<<t<<std::endl;
@@ -89,7 +89,7 @@ void test_trace_ray()
     std::cout << "Starting Hand" << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
     for (unsigned long int i=0; i < num_its; i++)
-      intersectQuadHandVectorized<Point>(o, d, V00, V10, V11, V01, u, v, t);
+      intersectQuadHandVectorized(o, d, V00, V10, V11, V01, u, v, t);
     hand_duration = std::chrono::high_resolution_clock::now() - start;
 
     std::cout<<t<<std::endl;
@@ -112,9 +112,9 @@ void test_trace_ray()
     auto start = std::chrono::high_resolution_clock::now();
     for (unsigned long int i=0; i < num_its; i++)
     {
-      o(0) += 1e-15;
+//      o(0) += 1e-15;
       intersectQuadUsingTriangles(o, d, V00, V10, V11, V01, u, v, t);
-      running_t += t;
+//      running_t += t;
     }
     vanilla_triangles_duration = std::chrono::high_resolution_clock::now() - start;
 
@@ -140,7 +140,7 @@ void test_trace_ray()
     {
 //      o(0) += 1e-15;
       intersectQuadUsingTriangles(o, d, V00, V10, V11, V01, u, v, t);
-      running_t += t;
+//      running_t += t;
     }
     vectorized_triangles_duration = std::chrono::high_resolution_clock::now() - start;
 
@@ -168,7 +168,7 @@ void test_trace_ray()
     {
 //      o(0) += 1e-15;
       h.intersectQuadUsingTrianglesHand(o, d, V00, V10, V11, V01, u, v, t);
-      running_t += t;
+//      running_t += t;
     }
     hand_triangles_duration = std::chrono::high_resolution_clock::now() - start;
 
