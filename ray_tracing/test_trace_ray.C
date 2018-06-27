@@ -35,6 +35,8 @@ void test_trace_ray()
     for (unsigned long int i=0; i < num_its; i++)
       intersectQuad<Point>(o, d, V00, V10, V11, V01, u, v, t);
     vanilla_duration = std::chrono::high_resolution_clock::now() - start;
+
+    std::cout<<t<<std::endl;
   }
 
   {
@@ -53,6 +55,8 @@ void test_trace_ray()
     for (unsigned long int i=0; i < num_its; i++)
       intersectQuad<VectorizedPoint>(o, d, V00, V10, V11, V01, u, v, t);
     vectorized_duration = std::chrono::high_resolution_clock::now() - start;
+
+    std::cout<<t<<std::endl;
   }
 
   {
